@@ -1,6 +1,6 @@
 from typing import List, Tuple, Optional
 
-DUCKDB_HEADER_FILE = r"C:/winoss/libduckdb-1-30-windows-amd64/duckdb_modified.h"
+DUCKDB_HEADER_FILE = r"modified_header_files/duckdb_modified.h"
 
 def preprocess_to_tags(lines: List[str]) -> List[str]:
     tags: List[str] = [None for _ in lines]
