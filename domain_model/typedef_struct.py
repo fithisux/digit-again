@@ -1,11 +1,11 @@
 import dataclasses
 from typing import Dict, Optional
-import interface_type_parser
+import typedef_type
 
 @dataclasses.dataclass
 class TypedefStruct:
     struct_name: Optional[str]
-    struct_fields: Dict[str, interface_type_parser.InterfaceType]
+    struct_fields: Dict[str, typedef_type.InterfaceType]
 
 @dataclasses.dataclass
 class TypedefAliasStructPointer:
