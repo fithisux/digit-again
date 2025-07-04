@@ -1,16 +1,15 @@
 import dataclasses
-from typing import List, Optional
+from typing import Dict, Optional
 
 @dataclasses.dataclass
-class EnumField:
-    enum_name: str
+class EnumFieldSpec:
     enum_value: Optional[int]
     enum_comment: Optional[str]
 
 @dataclasses.dataclass
 class TypedefEnum:
     enum_name: str
-    enum_fields: List[EnumField]
+    enum_fields: Dict[str, EnumFieldSpec]
 
 @dataclasses.dataclass
 class TypedefEnumAlias:
