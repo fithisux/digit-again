@@ -28,7 +28,7 @@ def parse_declaration_type_simple(stmt : str) -> declaration_type.DeclarationTyp
 
     # Let's get them together
 
-    stmt = re.sub(r'\* \*','**',stmt)
+    stmt = re.sub(r'\*\s','*',stmt)
 
     # At most two stars supported
 
@@ -38,30 +38,30 @@ def parse_declaration_type_simple(stmt : str) -> declaration_type.DeclarationTyp
     # Let's tackle double stars
 
     if '**' in stmt:
-        m = re.match(r'^(\w+)\s?\*\*\s?(\w+)$',stmt)
+        print(f"Stmt is {stmt}")
+        m = re.match(r'^(\w+)\s?\*\*\s?(\w+)\s?;$',stmt)
         if m is None:
             raise exceptions.BadDoubleStarsTypedefTypeSimple()
 
-        return declaration_type.DeclarationTypeSimple(m.group(0), f"**{m.group(1)}")
+        return declaration_type.DeclarationDoublePointerTypeSimple(m.group(2), m.group(1))
 
     # Let's tackle one star
 
     if '*' in stmt:
-        m = re.match(r'^(\w+)\s?\*\s?(\w+)$',stmt)
+        m = re.match(r'^(\w+)\s?\*\s?(\w+)\s?;$',stmt)
         if m is None:
             raise exceptions.BadSingleStarTypedefTypeSimple()
             
-        return declaration_type.DeclarationTypeSimple(m.group(0), f"*{m.group(1)}")
+        return declaration_type.DeclarationSinglePointerTypeSimple(m.group(2), m.group(1))
 
     else:
 
     # No star
-
-        m = re.match(r'^(\w+) (\w+)$',stmt)
+        m = re.match(r'^(\w+) (\w+)\s?;$',stmt)
         if m is None:
             raise exceptions.BadTypedefTypeSimple()
             
-        return declaration_type.DeclarationTypeSimple(m.group(0), m.group(1))
+        return declaration_type.DeclarationTypeSimple(m.group(2), m.group(1))
 
 
 def parse_typedef_type_function(stmt : str) -> declaration_type.DeclarationTypeSimple:
