@@ -1,9 +1,9 @@
 from dspitter.domain_model import typedef_type, declaration_type, exceptions
 import re
 
-def parse_typedef_type(stmt : str) -> typedef_type.TypedefAlias | None:
+def parse_typedef_type(stmt : str) -> typedef_type.TypedefAlias:
     if("(" in stmt):
-        return None
+        return parse_typedef_type_function
     else:
         return parse_typedef_type_simple(stmt)
 
