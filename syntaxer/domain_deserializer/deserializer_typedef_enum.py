@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-from dspitter.domain_model import exceptions, typedef_enum
+from syntaxer.domain_model import exceptions, typedef_enum
 
 
 def parse_typedef_enum(lines: List[str]) -> typedef_enum.TypedefEnumAlias:

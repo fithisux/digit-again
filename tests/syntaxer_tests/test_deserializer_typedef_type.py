@@ -1,5 +1,5 @@
-from dspitter.domain_deserializer import deserializer_typedef_type
-from dspitter.domain_model import typedef_type, declaration_type, exceptions
+from syntaxer.domain_deserializer import deserializer_typedef_type
+from syntaxer.domain_model import typedef_type, declaration_type, exceptions
 from typing import cast
 import pytest
 

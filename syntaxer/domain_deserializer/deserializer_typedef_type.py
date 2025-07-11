@@ -1,6 +1,6 @@
 import re
 
-from dspitter.domain_model import declaration_type, exceptions, typedef_type
+from syntaxer.domain_model import declaration_type, exceptions, typedef_type
 
 
 def parse_typedef_type(stmt: str) -> typedef_type.TypedefAlias:
