@@ -25,4 +25,9 @@ class DeclarationTypeFunction:
     function_output: declaration_type.DeclarationTypeSimple
 
 
+@dataclasses.dataclass
+class FunctionExport:
+    function_input: List[declaration_type.DeclarationTypeSimple]
+    function_output: declaration_type.DeclarationTypeSimple
+
 type DeclarationType = DeclarationTypeSimple | DeclarationSinglePointerTypeSimple | DeclarationDoublePointerTypeSimple | DeclarationTypeFunction
