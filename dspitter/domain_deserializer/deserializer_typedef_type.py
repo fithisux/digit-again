@@ -10,7 +10,7 @@ def parse_typedef_type(stmt : str) -> typedef_type.TypedefAlias:
         return parse_typedef_type_simple(stmt)
 
 
-def parse_typedef_type_simple(stmt : str) -> declaration_type.DeclarationTypeSimple:
+def parse_typedef_type_simple(stmt : str) -> declaration_type.DeclarationType:
     # Let's reduce spaces
     stmt = re.sub(r'\s+',' ',stmt)
     stmt = stmt.strip()
@@ -21,11 +21,6 @@ def parse_typedef_type_simple(stmt : str) -> declaration_type.DeclarationTypeSim
         raise exceptions.NotATypedef()
 
     stmt = stmt.replace('typedef ','')
-
-    return parse_declaration_type_simple(stmt)
-
-
-def parse_declaration_type_simple(stmt : str) -> declaration_type.DeclarationTypeSimple:
 
     # Let's take pointers out of equation
 
@@ -68,7 +63,7 @@ def parse_declaration_type_simple(stmt : str) -> declaration_type.DeclarationTyp
         return declaration_type.DeclarationTypeSimple(m.group(2), m.group(1))
 
 
-def parse_typedef_type_function(stmt : str) -> declaration_type.DeclarationTypeSimple:
+def parse_typedef_type_function(stmt : str) -> declaration_type.DeclarationTypeFunction:
     # Let's reduce spaces
     stmt = re.sub(r'\s+',' ',stmt)
 
