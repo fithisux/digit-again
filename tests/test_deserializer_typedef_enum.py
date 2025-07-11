@@ -1,12 +1,7 @@
 from dspitter.domain_deserializer import (
-    deserializer_typedef_type,
-    deserializer_typedef_struct,
     deserializer_typedef_enum,
 )
 from dspitter.domain_model import (
-    typedef_type,
-    typedef_struct,
-    declaration_type,
     typedef_enum,
     exceptions,
 )

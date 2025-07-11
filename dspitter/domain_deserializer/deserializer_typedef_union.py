@@ -5,25 +5,25 @@ from dspitter.domain_deserializer import deserializer_typedef_type
 from dspitter.domain_model import exceptions, typedef_union
 
 
-def parse_typedef_union(lines : List[str]) -> typedef_union.TypedefAliasUnion:
+def parse_typedef_union(lines: List[str]) -> typedef_union.TypedefAliasUnion:
     # Let's reduce spaces
-    lines = [ re.sub(r'\s+',' ',line) for line in lines]
-    lines = [ line.strip() for line in lines]
+    lines = [re.sub(r"\s+", " ", line) for line in lines]
+    lines = [line.strip() for line in lines]
 
     # strip c++ comments
-    lines = [re.sub(r'//.*$','',line) for line in lines]
+    lines = [re.sub(r"//.*$", "", line) for line in lines]
 
     # Let's eliminate typedef
-    stmt = ''.join(lines)
-    if not stmt.startswith('typedef union '):
+    stmt = "".join(lines)
+    if not stmt.startswith("typedef union "):
         raise exceptions.NotATypedefUnion()
 
-    stmt = stmt.replace('typedef union ','')
+    stmt = stmt.replace("typedef union ", "")
 
-    print(f'Whole union stmt: {stmt}')
+    print(f"Whole union stmt: {stmt}")
 
     # recover parts of struct
-    m = re.match(r'^\s?{(.*)}\s?(\w+)\s?;$', stmt)
+    m = re.match(r"^\s?{(.*)}\s?(\w+)\s?;$", stmt)
     if m is None:
         raise exceptions.BadTypedefUnion()
 
@@ -32,13 +32,13 @@ def parse_typedef_union(lines : List[str]) -> typedef_union.TypedefAliasUnion:
 
     # recover union fields
     union_fields = []
-    candidate_fields = m.group(1).split(';')
+    candidate_fields = m.group(1).split(";")
     if len(candidate_fields) == 1:
         raise exceptions.BadTypedefUnionField()
-    candidate_fields=candidate_fields[:-1]
+    candidate_fields = candidate_fields[:-1]
 
     for candidate_field in candidate_fields:
-        temp = "typedef "+candidate_field+';'
+        temp = "typedef " + candidate_field + ";"
         typedef_type = deserializer_typedef_type.parse_typedef_type(temp)
         union_fields.append(typedef_type)
 

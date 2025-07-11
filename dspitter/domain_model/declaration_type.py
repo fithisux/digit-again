@@ -9,17 +9,25 @@ class DeclarationTypeSimple:
     symbol_key: str
     type_value: str
 
+
 @dataclasses.dataclass
 class DeclarationSinglePointerTypeSimple:
     symbol_key: str
     type_value: str
+
 
 @dataclasses.dataclass
 class DeclarationDoublePointerTypeSimple:
     symbol_key: str
     type_value: str
 
-type DeclarationType = DeclarationTypeSimple | DeclarationSinglePointerTypeSimple | DeclarationDoublePointerTypeSimple
+
+type DeclarationType = (
+    DeclarationTypeSimple
+    | DeclarationSinglePointerTypeSimple
+    | DeclarationDoublePointerTypeSimple
+)
+
 
 @dataclasses.dataclass
 class DeclarationTypeFunction:

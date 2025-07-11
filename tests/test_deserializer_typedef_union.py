@@ -1,9 +1,7 @@
 from dspitter.domain_deserializer import (
-    deserializer_typedef_type,
     deserializer_typedef_union,
 )
 from dspitter.domain_model import (
-    typedef_type,
     typedef_union,
     declaration_type,
     exceptions,
