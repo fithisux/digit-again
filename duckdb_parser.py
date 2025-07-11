@@ -1,4 +1,5 @@
-from typing import List, Tuple, Optional
+from typing import List
+from retriever import chunk_reader
 
 DUCKDB_HEADER_FILE = r"modified_header_files/duckdb_modified.h"
 
@@ -53,62 +54,6 @@ def preprocess_to_tags(lines: List[str]) -> List[str]:
     return tags
 
 
-def read_typedef(lines: List[str], pos: int) -> Optional[Tuple[int, List[str], str]]:
-    lastpos = pos
-    if "typedef" in lines[pos]:
-        if "typedef struct" in lines[pos]:
-            while "}" not in lines[lastpos]:
-                lastpos = lastpos + 1
-            return (lastpos + 1, lines[pos : (lastpos + 1)], "structalias")
-        elif "typedef union" in lines[pos]:
-            while "}" not in lines[lastpos]:
-                lastpos = lastpos + 1
-            return (lastpos + 1, lines[pos : (lastpos + 1)], "unionalias")
-        elif "typedef enum" in lines[pos]:
-            while "}" not in lines[lastpos]:
-                lastpos = lastpos + 1
-            return (lastpos + 1, lines[pos : (lastpos + 1)], "enumalias")
-        else:
-            while ";" not in lines[lastpos]:
-                lastpos = lastpos + 1
-            return (lastpos + 1, lines[pos : (lastpos + 1)], "typealias")
-    else:
-        return None
-
-
-def read_function(lines: List[str], pos: int) -> Optional[Tuple[int, List[str]]]:
-    lastpos = pos
-    if "DUCKDB_C_API" in lines[pos]:
-        while ")" not in lines[lastpos]:
-            lastpos = lastpos + 1
-        return (lastpos + 1, lines[pos : (lastpos + 1)])
-    else:
-        return None
-
-
-def read_c_comment(lines: List[str], pos: int) -> Optional[Tuple[int, List[str]]]:
-    lastpos = pos
-    if "/*" in lines[pos]:
-        while "*/" not in lines[lastpos]:
-            lastpos = lastpos + 1
-        return (lastpos + 1, lines[pos : (lastpos + 1)])
-    else:
-        return None
-
-
-def read_cpp_comment(lines: List[str], pos: int) -> Optional[Tuple[int, str]]:
-    if "//" in lines[pos]:
-        return (pos + 1, lines[pos])
-    else:
-        return None
-
-
-def read_empty_line(lines: List[str], pos: int) -> Optional[Tuple[int, str]]:
-    if lines[pos] == "":
-        return (pos + 1, lines[pos])
-    else:
-        return None
-
 
 def parse_file(file_name: str):
     deprecation_marker = False
@@ -146,31 +91,31 @@ def parse_file(file_name: str):
 
             print(f"Read line with deprecation_marker {deprecation_marker}")
             print(f"Read line with content {lines[pos]}")
-            result = read_empty_line(lines, pos)
+            result = chunk_reader.read_empty_line(lines, pos)
             if result is not None:
                 print("read_empty_line")
                 print(result[1])
                 pos = result[0]
                 continue
-            result = read_cpp_comment(lines, pos)
+            result = chunk_reader.read_cpp_comment(lines, pos)
             if result is not None:
                 print("read_cpp_comment")
                 print(result[1])
                 pos = result[0]
                 continue
-            result = read_c_comment(lines, pos)
+            result = chunk_reader.read_c_comment(lines, pos)
             if result is not None:
                 print("read_c_comment")
                 print(result[1])
                 pos = result[0]
                 continue
-            result = read_function(lines, pos)
+            result = chunk_reader.read_function_export("DUCKDB_C_API", lines, pos)
             if result is not None:
-                print("read_function")
+                print("read_function_export")
                 print(result[1])
                 pos = result[0]
                 continue
-            result = read_typedef(lines, pos)
+            result = chunk_reader.read_typedef(lines, pos)
             if result is not None:
                 print(f"read_typedef {result[2]}")
                 print(result[1])
