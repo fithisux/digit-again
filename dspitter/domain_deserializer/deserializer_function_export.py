@@ -10,44 +10,41 @@ def parse_function_export(
 ) -> declaration_type.FunctionExport:
     # Let's reduce spaces
 
-    stmt = "".join(lines)
-    stmt = re.sub(r"\s+", " ", stmt)
+    stmt = ''.join(lines)
+    stmt = re.sub(r'\s+',' ',stmt)
 
-    # Let's eliminate typedef
+    # Let's eliminate exporter
 
-    if not stmt.startswith(f"{some_marker} "):
+    print(f'Whole function export stmt: {stmt}')
+
+    if not stmt.startswith(f'{some_marker} '):
         raise exceptions.NotAFunctionExport()
 
-    stmt = stmt.replace(f"{some_marker} ", "")
+    stmt = stmt.replace(f'{some_marker} ','')
+    stmt = stmt.strip()
 
     # Let's take function out of the equation
 
-    m = re.match(r"(\w+)\s+\(\s?\*\s?(\w+)\s?\)\s?\(([\s\,\w]*)\)", stmt)
+    m = re.match(r"^(\w+[\s?\*\s?]*)\s(\w+)\s?\((.*)\)\s?;$", stmt)
 
     if m is None:
+        print("shit!")
         raise exceptions.BadFunctionExport()
 
     output_type = m.group(1)
     function_name = m.group(2)
     function_args = m.group(3)
 
-    function_output = f"{output_type} {function_name}"
+    function_output = f"typedef {output_type} {function_name};"
 
-    output_type_simple = deserializer_typedef_type.parse_declaration_type_simple(
-        function_output
-    )
+    output_type_simple = deserializer_typedef_type.parse_typedef_type_simple(function_output)
 
     function_args = function_args.strip()
 
     inputs_type_simple = []
     if function_args:
-        function_inputs = function_args.split(",")
-        inputs_type_simple = [
-            deserializer_typedef_type.parse_declaration_type_simple(
-                function_input.strip()
-            )
-            for function_input in function_inputs
-        ]
+        function_inputs = function_args.split(',')
+        inputs_type_simple = [deserializer_typedef_type.parse_typedef_type_simple(f"typedef {function_input.strip()};") for function_input in function_inputs]
 
     return declaration_type.FunctionExport(
         inputs_type_simple, output_type_simple
