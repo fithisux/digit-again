@@ -1,7 +1,9 @@
-from dspitter.domain_model import exceptions, typedef_struct
-from dspitter.domain_deserializer import deserializer_typedef_type
 import re
 from typing import List
+
+from dspitter.domain_deserializer import deserializer_typedef_type
+from dspitter.domain_model import exceptions, typedef_struct
+
 
 def parse_typedef_struct(lines : List[str]) -> typedef_struct.TypedefStruct:
     # Let's reduce spaces
@@ -20,6 +22,7 @@ def parse_typedef_struct(lines : List[str]) -> typedef_struct.TypedefStruct:
 
     print(f'Whole struct stmt: {stmt}')
 
+    # recover parts of struct
     m = re.match(r'^(\w*)\s?{(.*)}\s?(\*?\s?\w+)\s?;$', stmt)
     if m is None:
         raise exceptions.BadTypedefStruct()
@@ -42,8 +45,8 @@ def parse_typedef_struct(lines : List[str]) -> typedef_struct.TypedefStruct:
         raise exceptions.BadTypedefStructField()
     candidate_fields=candidate_fields[:-1]
 
-    for struct_field in candidate_fields:
-        temp = "typedef "+struct_field+';'
+    for candidate_field in candidate_fields:
+        temp = "typedef "+candidate_field+';'
         typedef_type = deserializer_typedef_type.parse_typedef_type(temp)
         struct_fields.append(typedef_type)
 

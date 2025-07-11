@@ -33,7 +33,7 @@ def test_typedef_struct1():
     assert temp.struct_declaration.struct_fields == [
         declaration_type.DeclarationTypeSimple(symbol_key="year", type_value="int32_t"),
         declaration_type.DeclarationTypeSimple(symbol_key="month", type_value="int8_t"),
-        declaration_type.DeclarationTypeSimple(symbol_key="day", type_value="int8_t")
+        declaration_type.DeclarationTypeSimple(symbol_key="day", type_value="int8_t"),
     ]
 
 
@@ -58,5 +58,17 @@ def test_typedef_struct2():
     assert temp.struct_declaration.struct_fields == [
         declaration_type.DeclarationTypeSimple(symbol_key="year", type_value="int32_t"),
         declaration_type.DeclarationTypeSimple(symbol_key="month", type_value="int8_t"),
-        declaration_type.DeclarationTypeSimple(symbol_key="day", type_value="int8_t")
+        declaration_type.DeclarationTypeSimple(symbol_key="day", type_value="int8_t"),
     ]
+
+
+def test_typedef_badstruct():
+    stmt = """typedef struct duckdb_date_struct  {
+	int32_t year;
+	int8_t month;
+	int8_t day;
+} * ;"""
+
+    lines = stmt.split("\n")
+    with pytest.raises(exceptions.BadTypedefStruct):
+        _ = deserializer_typedef_struct.parse_typedef_struct(lines)

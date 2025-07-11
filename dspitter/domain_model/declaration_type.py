@@ -1,5 +1,6 @@
 import dataclasses
 from typing import List
+
 from dspitter.domain_model import declaration_type
 
 

@@ -1,6 +1,8 @@
 import dataclasses
 from typing import List, Optional
+
 from dspitter.domain_model import typedef_type
+
 
 @dataclasses.dataclass
 class StructDeclaration:

@@ -1,7 +1,8 @@
-from dspitter.domain_model import declaration_type, exceptions
 import re
-from dspitter.domain_deserializer import deserializer_typedef_type
 from typing import List
+
+from dspitter.domain_deserializer import deserializer_typedef_type
+from dspitter.domain_model import declaration_type, exceptions
 
 
 def parse_function_export(
