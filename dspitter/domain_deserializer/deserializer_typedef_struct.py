@@ -7,37 +7,45 @@ def parse_typedef_struct(lines : List[str]) -> typedef_struct.TypedefStruct:
     # Let's reduce spaces
     lines = [ re.sub(r'\s+',' ',line) for line in lines]
     lines = [ line.strip() for line in lines]
-    lines = [ re.sub(r'\s?=\s?','=',line) for line in lines]
-
-    # Let's eliminate typedef
-    stmt = lines[0]
-    if not stmt.startswith('typedef struct '):
-        raise exceptions.NotATypedefStruct()
-
-    lines[0] = stmt.replace('typedef struct ','')
 
     # strip c++ comments
     lines = [re.sub(r'//.*$','',line) for line in lines]
 
-    # recover struct label
-    struct_label = re.match(r'(\w+)\s?{',lines[0])
-    if struct_label is not None:
-        struct_label = struct_label.group(1)
+    # Let's eliminate typedef
+    stmt = ''.join(lines)
+    if not stmt.startswith('typedef struct '):
+        raise exceptions.NotATypedefStruct()
 
-    # recover struct fields
-    struct_fields = set()
-    for line in lines:
-        if re.match(r'\s+'):
-            continue
-        else:
-            temp = "typedef "+line.strip()
-            typedef_type = deserializer_typedef_type.parse_typedef_type(temp)
-            struct_fields.add(typedef_type)
+    stmt = stmt.replace('typedef struct ','')
+
+    print(f'Whole struct stmt: {stmt}')
+
+    m = re.match(r'^(\w*)\s?{(.*)}\s?(\*?\s?\w+)\s?;$', stmt)
+    if m is None:
+        raise exceptions.BadTypedefStruct()
+
+    # recover struct label
+    struct_label = m.group(1)
+    if struct_label == '':
+        struct_label = None
 
     # recover struct alias
-    alias_match = re.match(r'}\s?(\*?)?\s?(\w+)\s?;', lines[-1])
-    is_pointer_alias = (alias_match.group(1) == '*')
-    struct_alias = alias_match.group(2)
+    struct_alias = m.group(3).strip()
+    is_pointer_alias = struct_alias.startswith('*')
+    struct_alias = struct_alias.replace('*','')
+    struct_alias = struct_alias.replace(' ','')
+
+    # recover struct fields
+    struct_fields = []
+    candidate_fields = m.group(2).split(';')
+    if len(candidate_fields) == 1:
+        raise exceptions.BadTypedefStructField()
+    candidate_fields=candidate_fields[:-1]
+
+    for struct_field in candidate_fields:
+        temp = "typedef "+struct_field+';'
+        typedef_type = deserializer_typedef_type.parse_typedef_type(temp)
+        struct_fields.append(typedef_type)
 
     # construct the struct
 

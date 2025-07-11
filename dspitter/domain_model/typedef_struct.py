@@ -1,11 +1,11 @@
 import dataclasses
-from typing import Set, Optional
+from typing import List, Optional
 from dspitter.domain_model import typedef_type
 
 @dataclasses.dataclass
 class StructDeclaration:
     struct_label: Optional[str]
-    struct_fields: Set[typedef_type.TypedefAlias]
+    struct_fields: List[typedef_type.TypedefAlias]
 
 @dataclasses.dataclass
 class TypedefAliasStructPointer:
