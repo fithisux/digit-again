@@ -9,12 +9,10 @@ def parse_comment_type(lines: List[str]) -> comment_type.CommentType:
     if len(lines) == 1:
         stmt = lines[0]
         m = re.match(r"^\s+//(.*)$", stmt)
-        if m is None:
-            raise exceptions.NotACPPComment()
-        else:
+        if m is not None:
             return comment_type.CommentType([m.group(1)])
 
-    m = re.match(r"^\s+/\*(.*)$", lines[0])
+    m = re.match(r"^\s*/\*(.*)$", lines[0])
 
     if m is None:
         raise exceptions.NotAComment()
@@ -23,7 +21,7 @@ def parse_comment_type(lines: List[str]) -> comment_type.CommentType:
         if re.match(r"/\*", line):
             raise exceptions.NotAComment()
 
-    m = re.match(r"^(.*)\*/$", lines[-1])
+    m = re.match(r"^(.*)\*/\s*$", lines[-1])
 
     if m is None:
         raise exceptions.NotAComment()
@@ -33,7 +31,7 @@ def parse_comment_type(lines: List[str]) -> comment_type.CommentType:
             raise exceptions.NotAComment()
 
     # Let's eliminate exporter
-    lines[0] = re.sub(r"^\s+//(.*)$", '', lines[0])
-    lines[-1] = re.sub(r"^(.*)\*/$", '', lines[-1])
+    lines[0] = re.sub(r"^\s*/\*", '', lines[0])
+    lines[-1] = re.sub(r"\*/\s*$", '', lines[-1])
 
     return comment_type.CommentType(lines)
