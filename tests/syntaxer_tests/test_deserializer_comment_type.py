@@ -25,7 +25,7 @@ def test_c_comment1():
     temp = cast(comment_type.CommentType, some_typedef)
     assert temp.text == [" hehe "]
 
-def test_c_comment1():
+def test_c_comment2():
     some_typedef: comment_type.CommentType = (
         deserializer_comment_type.parse_comment_type(["   /* ", "hehe */"])
     )
