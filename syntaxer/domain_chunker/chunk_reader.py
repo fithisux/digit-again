@@ -134,7 +134,7 @@ def read_cpp_comment(lines: List[str], pos: int) -> Optional[ChunkSpec]:
         return None
 
 
-def read_empty_line(lines: List[str], pos: int) -> Optional[Tuple[int, str]]:
+def read_empty_line(lines: List[str], pos: int) -> Optional[ChunkSpec]:
     if lines[pos].replace(" ", "") == "":
         return ChunkSpec(pos, pos + 1, [""], ChunkType.EMPTY_LINE)
     else:
