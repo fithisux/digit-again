@@ -1,5 +1,5 @@
 from typing import List
-from retriever import chunk_reader
+from syntaxer.domain_chunker import chunk_reader
 
 DUCKDB_HEADER_FILE = r"modified_header_files/duckdb_modified.h"
 
@@ -53,7 +53,8 @@ def preprocess_to_tags(lines: List[str]) -> List[str]:
                 tags[pos] = f"conditional {conditional_level}"
     return tags
 
-
+def mark_lines_as_deprecated(file_name: str) -> List[bool]:
+    return []
 
 def parse_file(file_name: str):
     deprecation_marker = False
@@ -61,7 +62,7 @@ def parse_file(file_name: str):
         lines = f.read().splitlines()
         pos = 0
         tags = preprocess_to_tags(lines)
-        print(tags)
+        # print(tags)
         while pos < len(lines):
             if tags[pos].startswith("conditional"):
                 if deprecation_marker:
@@ -92,37 +93,28 @@ def parse_file(file_name: str):
             print(f"Read line with deprecation_marker {deprecation_marker}")
             print(f"Read line with content {lines[pos]}")
             result = chunk_reader.read_empty_line(lines, pos)
+            if (result := chunk_reader.read_empty_line(lines, pos)) is not None:
+                ...
+            elif (result := chunk_reader.read_cpp_comment(lines, pos)) is not None:
+                ...
+            elif (result := chunk_reader.read_c_comment(lines, pos)) is not None:
+                ...
+            elif (
+                result := chunk_reader.read_function_export("DUCKDB_C_API", lines, pos)
+            ) is not None:
+                ...
+            elif (result := chunk_reader.read_typedef(lines, pos)) is not None:
+                ...
+            else:
+                result = None
+
             if result is not None:
-                print("read_empty_line")
-                print(result[1])
-                pos = result[0]
+                print(result)
+                pos = result.after_end_pos
                 continue
-            result = chunk_reader.read_cpp_comment(lines, pos)
-            if result is not None:
-                print("read_cpp_comment")
-                print(result[1])
-                pos = result[0]
-                continue
-            result = chunk_reader.read_c_comment(lines, pos)
-            if result is not None:
-                print("read_c_comment")
-                print(result[1])
-                pos = result[0]
-                continue
-            result = chunk_reader.read_function_export("DUCKDB_C_API", lines, pos)
-            if result is not None:
-                print("read_function_export")
-                print(result[1])
-                pos = result[0]
-                continue
-            result = chunk_reader.read_typedef(lines, pos)
-            if result is not None:
-                print(f"read_typedef {result[2]}")
-                print(result[1])
-                pos = result[0]
-                continue
-            print("We have a problem")
-            break
+            else:
+                print("We have a problem")
+                break
 
 
 if __name__ == "__main__":
