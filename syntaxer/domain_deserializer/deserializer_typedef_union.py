@@ -1,11 +1,11 @@
 import re
 from typing import List
 
-from syntaxer.domain_deserializer import deserializer_typedef_type
+from syntaxer.domain_deserializer import deserializer_typedef_bare
 from syntaxer.domain_model import exceptions, typedef_union
 
 
-def parse_typedef_union(lines: List[str]) -> typedef_union.TypedefAliasUnion:
+def parse_typedef_union(lines: List[str]) -> typedef_union.TypedefUnion:
     # Let's reduce spaces
     lines = [re.sub(r"\s+", " ", line) for line in lines]
     lines = [line.strip() for line in lines]
@@ -39,8 +39,8 @@ def parse_typedef_union(lines: List[str]) -> typedef_union.TypedefAliasUnion:
 
     for candidate_field in candidate_fields:
         temp = "typedef " + candidate_field + ";"
-        typedef_type = deserializer_typedef_type.parse_typedef_type(temp)
-        union_fields.append(typedef_type)
+        typedef_bare = deserializer_typedef_bare.parse_typedef_bare(temp)
+        union_fields.append(typedef_bare)
 
     # construct the union
-    return typedef_union.TypedefAliasUnion(union_alias, union_fields)
+    return typedef_union.TypedefUnion(union_alias, union_fields)

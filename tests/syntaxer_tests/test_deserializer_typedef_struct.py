@@ -23,9 +23,9 @@ def test_typedef_struct1():
         deserializer_typedef_struct.parse_typedef_struct(lines)
     )
 
-    assert isinstance(some_typedef, typedef_struct.TypedefAliasStruct)
+    assert isinstance(some_typedef, typedef_struct.TypedefStructValue)
 
-    temp = cast(typedef_struct.TypedefAliasStruct, some_typedef)
+    temp = cast(typedef_struct.TypedefStructValue, some_typedef)
     assert temp.struct_alias == "duckdb_date_struct"
     assert temp.struct_declaration.struct_label is None
     assert temp.struct_declaration.struct_fields == [
@@ -48,15 +48,40 @@ def test_typedef_struct2():
         deserializer_typedef_struct.parse_typedef_struct(lines)
     )
 
-    assert isinstance(some_typedef, typedef_struct.TypedefAliasStructPointer)
+    assert isinstance(some_typedef, typedef_struct.TypedefStructPointer)
 
-    temp = cast(typedef_struct.TypedefAliasStructPointer, some_typedef)
+    temp = cast(typedef_struct.TypedefStructPointer, some_typedef)
     assert temp.struct_alias == "duckdb_date_struct_t"
     assert temp.struct_declaration.struct_label == "duckdb_date_struct"
     assert temp.struct_declaration.struct_fields == [
         declaration_type.DeclarationTypeSimple(symbol_key="year", type_value="int32_t"),
         declaration_type.DeclarationTypeSimple(symbol_key="month", type_value="int8_t"),
         declaration_type.DeclarationTypeSimple(symbol_key="day", type_value="int8_t"),
+    ]
+
+
+def test_typedef_struct3():
+    stmt = """typedef struct {
+	uint32_t length;
+	char prefix[4];
+	char *ptr;
+} varchar_as_pointer;"""
+
+    lines = stmt.split("\n")
+
+    some_typedef: typedef_struct.TypedefStruct = (
+        deserializer_typedef_struct.parse_typedef_struct(lines)
+    )
+
+    assert isinstance(some_typedef, typedef_struct.TypedefStructValue)
+
+    temp = cast(typedef_struct.TypedefStructValue, some_typedef)
+    assert temp.struct_alias == "varchar_as_pointer"
+    assert temp.struct_declaration.struct_label is None
+    assert temp.struct_declaration.struct_fields == [
+        declaration_type.DeclarationTypeSimple(symbol_key="length", type_value="uint32_t"),
+        declaration_type.DeclarationFixedArrayTypeSimple(symbol_key="prefix", type_value="char", length=4),
+        declaration_type.DeclarationSinglePointerTypeSimple(symbol_key="ptr", type_value="char"),
     ]
 
 

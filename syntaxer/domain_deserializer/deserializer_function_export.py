@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-from syntaxer.domain_deserializer import deserializer_typedef_type
+from syntaxer.domain_deserializer import deserializer_typedef_bare
 from syntaxer.domain_model import declaration_type, exceptions
 
 
@@ -37,7 +37,7 @@ def parse_function_export(
 
     function_output = f"typedef {output_type} {function_name};"
 
-    output_type_simple = deserializer_typedef_type.parse_typedef_type_simple(
+    output_type_simple = deserializer_typedef_bare.parse_typedef_bare_simple(
         function_output
     )
 
@@ -47,7 +47,7 @@ def parse_function_export(
     if function_args:
         function_inputs = function_args.split(",")
         inputs_type_simple = [
-            deserializer_typedef_type.parse_typedef_type_simple(
+            deserializer_typedef_bare.parse_typedef_bare_simple(
                 f"typedef {function_input.strip()};"
             )
             for function_input in function_inputs

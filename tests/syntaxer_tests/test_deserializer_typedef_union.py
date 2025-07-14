@@ -19,13 +19,13 @@ def test_typedef_union():
 
     lines = stmt.split("\n")
 
-    some_typedef: typedef_union.TypedefAliasUnion = (
+    some_typedef: typedef_union.TypedefUnion = (
         deserializer_typedef_union.parse_typedef_union(lines)
     )
 
-    assert isinstance(some_typedef, typedef_union.TypedefAliasUnion)
+    assert isinstance(some_typedef, typedef_union.TypedefUnion)
 
-    temp = cast(typedef_union.TypedefAliasUnion, some_typedef)
+    temp = cast(typedef_union.TypedefUnion, some_typedef)
     assert temp.union_alias == "duckdb_date"
     assert temp.union_fields[0] == declaration_type.DeclarationTypeSimple(
         symbol_key="year", type_value="int32_t"

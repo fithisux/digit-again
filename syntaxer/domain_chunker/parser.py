@@ -1,8 +1,12 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from syntaxer.domain_chunker import chunk_reader, line_tagger
 import dataclasses
 
+from syntaxer.domain_deserializer import deserializer_comment_type, deserializer_function_export, deserializer_typedef_enum, deserializer_typedef_struct, deserializer_typedef_bare, deserializer_typedef_union
+from syntaxer.domain_model import comment_type, declaration_type, typedef_enum, typedef_struct, typedef_bare, typedef_union
+
 class NonConformingFile(Exception): ...
+class UnknownChunk(Exception): ...
 
 @dataclasses.dataclass
 class ParseConfig:
@@ -11,7 +15,7 @@ class ParseConfig:
     function_export_marker: str
 
 
-def parse_file(parse_config: ParseConfig) -> List[Tuple[bool, chunk_reader.ChunkSpec]]:
+def chunk_file(parse_config: ParseConfig) -> List[Tuple[bool, chunk_reader.ChunkSpec]]:
 
     chunk_specs: List[Tuple[bool, chunk_reader.ChunkSpec]] = []
     with open(parse_config.file_name, newline="") as f:
@@ -51,3 +55,33 @@ def parse_file(parse_config: ParseConfig) -> List[Tuple[bool, chunk_reader.Chunk
                 raise NonConformingFile()
 
     return chunk_specs
+
+
+type Parse_Type =  comment_type.CommentType | declaration_type.FunctionExport | typedef_enum.TypedefEnum | typedef_struct.TypedefStruct | typedef_bare.TypedefBare | typedef_union.TypedefUnion
+
+def parse_chunks(parse_config: ParseConfig, chunks: List[Tuple[bool, chunk_reader.ChunkSpec]]) -> List[Tuple[bool, Optional[Parse_Type]]]:
+
+    parse_specs: List[Optional[Parse_Type]] = []
+    for chunk in chunks:
+        print(chunk)
+        match(chunk[1].chuck_type):
+            case chunk_reader.ChunkType.C_COMMENT:
+                parse_specs.append(deserializer_comment_type.parse_comment_type(chunk[1].lines))
+            case chunk_reader.ChunkType.CPP_COMMENT:
+                parse_specs.append(deserializer_comment_type.parse_comment_type(chunk[1].lines))
+            case chunk_reader.ChunkType.EMPTY_LINE:
+                parse_specs.append(None)
+            case chunk_reader.ChunkType.FUNCTION_EXPORT:
+                parse_specs.append(deserializer_function_export.parse_function_export(parse_config.function_export_marker ,chunk[1].lines))
+            case chunk_reader.ChunkType.TYPEDEF_BARE:
+                parse_specs.append(deserializer_typedef_bare.lines_parse_typedef_bare(chunk[1].lines))
+            case chunk_reader.ChunkType.TYPEDEF_ENUM:
+                parse_specs.append(deserializer_typedef_enum.parse_typedef_enum(chunk[1].lines))
+            case chunk_reader.ChunkType.TYPEDEF_STRUCT:
+                parse_specs.append(deserializer_typedef_struct.parse_typedef_struct(chunk[1].lines))
+            case chunk_reader.ChunkType.TYPEDEF_UNION:
+                parse_specs.append(deserializer_typedef_union.parse_typedef_union(chunk[1].lines))
+            case _:
+                raise UnknownChunk()
+    
+    return [(chunks[i][0], parse_specs[i]) for i,_ in enumerate(parse_specs)]

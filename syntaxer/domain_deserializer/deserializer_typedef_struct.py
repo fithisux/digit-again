@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-from syntaxer.domain_deserializer import deserializer_typedef_type
+from syntaxer.domain_deserializer import deserializer_typedef_bare
 from syntaxer.domain_model import exceptions, typedef_struct
 
 
@@ -47,16 +47,16 @@ def parse_typedef_struct(lines: List[str]) -> typedef_struct.TypedefStruct:
 
     for candidate_field in candidate_fields:
         temp = "typedef " + candidate_field + ";"
-        typedef_type = deserializer_typedef_type.parse_typedef_type(temp)
-        struct_fields.append(typedef_type)
+        typedef_bare = deserializer_typedef_bare.parse_typedef_bare(temp)
+        struct_fields.append(typedef_bare)
 
     # construct the struct
 
     if is_pointer_alias:
-        return typedef_struct.TypedefAliasStructPointer(
+        return typedef_struct.TypedefStructPointer(
             struct_alias, typedef_struct.StructDeclaration(struct_label, struct_fields)
         )
     else:
-        return typedef_struct.TypedefAliasStruct(
+        return typedef_struct.TypedefStructValue(
             struct_alias, typedef_struct.StructDeclaration(struct_label, struct_fields)
         )

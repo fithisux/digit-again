@@ -1,5 +1,5 @@
 from syntaxer.domain_model import declaration_type
 
-type TypedefAlias = (
+type TypedefBare = (
     declaration_type.DeclarationType | declaration_type.DeclarationTypeFunction
 )

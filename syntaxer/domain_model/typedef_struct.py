@@ -1,25 +1,25 @@
 import dataclasses
 from typing import List, Optional
 
-from syntaxer.domain_model import typedef_type
+from syntaxer.domain_model import typedef_bare
 
 
 @dataclasses.dataclass
 class StructDeclaration:
     struct_label: Optional[str]
-    struct_fields: List[typedef_type.TypedefAlias]
+    struct_fields: List[typedef_bare.TypedefBare]
 
 
 @dataclasses.dataclass
-class TypedefAliasStructPointer:
+class TypedefStructPointer:
     struct_alias: str
     struct_declaration: StructDeclaration
 
 
 @dataclasses.dataclass
-class TypedefAliasStruct:
+class TypedefStructValue:
     struct_alias: str
     struct_declaration: StructDeclaration
 
 
-type TypedefStruct = TypedefAliasStruct | TypedefAliasStructPointer
+type TypedefStruct = TypedefStructValue | TypedefStructPointer

@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Optional
 import dataclasses
 import re
 from enum import Enum, auto
