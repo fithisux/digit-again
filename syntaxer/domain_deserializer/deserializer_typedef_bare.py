@@ -4,9 +4,7 @@ from syntaxer.domain_model import declaration_type, exceptions, typedef_bare
 
 
 def lines_parse_typedef_bare(lines: List[str]) -> typedef_bare.TypedefBare:
-    if len(lines) != 1:
-        raise exceptions.NotATypeDeclaration
-    parse_typedef_bare(lines[0])
+    parse_typedef_bare(''.join(lines))
 
 def parse_typedef_bare(stmt: str) -> typedef_bare.TypedefBare:
     if "(" in stmt:
@@ -42,7 +40,7 @@ def parse_typedef_bare_simple(stmt: str) -> declaration_type.DeclarationType:
 
     print(f"Stmt is {stmt}")
     if "**" in stmt:
-        m = re.match(r"^(\w+)\s?\*\*\s?(\w+)\s?;$", stmt)
+        m = re.match(r"^(const \w+|\w+)\s?\*\*\s?(\w+)\s?;$", stmt)
         if m is None:
             raise exceptions.BadDeclarationDoublePointerTypeSimple()
 
@@ -53,7 +51,7 @@ def parse_typedef_bare_simple(stmt: str) -> declaration_type.DeclarationType:
     # Let's tackle one star
 
     if "*" in stmt:
-        m = re.match(r"^(\w+)\s?\*\s?(\w+)\s?;$", stmt)
+        m = re.match(r"^(const \w+|\w+)\s?\*\s?(\w+)\s?;$", stmt)
         if m is None:
             raise exceptions.BadDeclarationSinglePointerTypeSimple()
 
@@ -64,7 +62,7 @@ def parse_typedef_bare_simple(stmt: str) -> declaration_type.DeclarationType:
     # Let's tackle an array
 
     if "[" in stmt and "]" in stmt:
-        m = re.match(r"^(\w+) (\w+)\s?\[(\d+)\]\s?;$", stmt)
+        m = re.match(r"^(const \w+|\w+) (\w+)\s?\[(\d+)\]\s?;$", stmt)
         if m is None:
             raise exceptions.BadDeclarationFixedArrayTypeSimple()
 
@@ -74,7 +72,7 @@ def parse_typedef_bare_simple(stmt: str) -> declaration_type.DeclarationType:
 
     else:
         # Last resort
-        m = re.match(r"^(\w+) (\w+)\s?;$", stmt)
+        m = re.match(r"^(const \w+|\w+) (\w+)\s?;$", stmt)
         if m is None:
             raise exceptions.BadDeclarationTypeSimple()
 
