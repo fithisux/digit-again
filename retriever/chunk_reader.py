@@ -1,5 +1,6 @@
 from typing import List, Tuple, Optional
 
+
 def read_typedef(lines: List[str], pos: int) -> Optional[Tuple[int, List[str], str]]:
     lastpos = pos
     if "typedef" in lines[pos]:
