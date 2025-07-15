@@ -1,5 +1,5 @@
 
-from typing import List, Tuple
+from typing import List
 import dataclasses
 
 class ConditionalTransitionProblem(Exception): ...
@@ -12,7 +12,7 @@ class LineTagging:
 
 
 def tag_lines(marker_deprecation: str, lines: List[str]) -> List[LineTagging]:
-    tags: List[Tuple[LineTagging]] = []
+    tags: List[LineTagging] = []
 
     prev_tagging = LineTagging(0, 0)
     for pos, line in enumerate(lines):

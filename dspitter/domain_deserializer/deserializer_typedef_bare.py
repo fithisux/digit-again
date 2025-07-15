@@ -4,7 +4,7 @@ from dspitter.domain_model import declaration_type, exceptions, typedef_bare
 
 
 def lines_parse_typedef_bare(lines: List[str]) -> typedef_bare.TypedefBare:
-    parse_typedef_bare(''.join(lines))
+    return parse_typedef_bare(''.join(lines))
 
 def parse_typedef_bare(stmt: str) -> typedef_bare.TypedefBare:
     if "(" in stmt:

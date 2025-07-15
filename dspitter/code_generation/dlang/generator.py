@@ -117,7 +117,7 @@ def generate_function_export(input: declaration_type.FunctionExport) -> str:
     arg_list = ",".join(
         [
             " ".join(generate_typedecl_plain(function_input))
-            for function_input in temp.function_input
+            for function_input in input.function_input
         ]
     )
 
