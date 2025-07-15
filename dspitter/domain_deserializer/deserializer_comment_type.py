@@ -1,6 +1,6 @@
 import re
 from typing import List
-from syntaxer.domain_model import comment_type, exceptions
+from dspitter.domain_model import comment_type, exceptions
 
 
 def parse_comment_type(lines: List[str]) -> comment_type.CommentType:

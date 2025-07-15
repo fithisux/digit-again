@@ -1,4 +1,4 @@
-from syntaxer.domain_chunker import parser
+from dspitter.domain_chunker import parser
 
 DUCKDB_HEADER_FILE = "modified_header_files/duckdb_modified.h"
 DUCKDB_DEPRECATION_MARKER = "DUCKDB_API_NO_DEPRECATED"

@@ -1,9 +1,9 @@
 from typing import List, Tuple, Optional
-from syntaxer.domain_chunker import chunk_reader, line_tagger
+from dspitter.domain_chunker import chunk_reader, line_tagger
 import dataclasses
 
-from syntaxer.domain_deserializer import deserializer_comment_type, deserializer_function_export, deserializer_typedef_enum, deserializer_typedef_struct, deserializer_typedef_bare, deserializer_typedef_union
-from syntaxer.domain_model import comment_type, declaration_type, typedef_enum, typedef_struct, typedef_bare, typedef_union
+from dspitter.domain_deserializer import deserializer_comment_type, deserializer_function_export, deserializer_typedef_enum, deserializer_typedef_struct, deserializer_typedef_bare, deserializer_typedef_union
+from dspitter.domain_model import comment_type, declaration_type, typedef_enum, typedef_struct, typedef_bare, typedef_union
 
 class NonConformingFile(Exception): ...
 class UnknownChunk(Exception): ...

@@ -1,8 +1,8 @@
 import re
 from typing import List
 
-from syntaxer.domain_deserializer import deserializer_typedef_bare
-from syntaxer.domain_model import exceptions, typedef_union
+from dspitter.domain_deserializer import deserializer_typedef_bare
+from dspitter.domain_model import exceptions, typedef_union
 
 
 def parse_typedef_union(lines: List[str]) -> typedef_union.TypedefUnion:

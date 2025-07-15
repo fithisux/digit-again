@@ -1,8 +1,8 @@
 import re
 from typing import List
 
-from syntaxer.domain_deserializer import deserializer_typedef_bare
-from syntaxer.domain_model import declaration_type, exceptions
+from dspitter.domain_deserializer import deserializer_typedef_bare
+from dspitter.domain_model import declaration_type, exceptions
 
 
 def parse_function_export(

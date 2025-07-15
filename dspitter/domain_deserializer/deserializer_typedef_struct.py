@@ -1,8 +1,8 @@
 import re
 from typing import List
 
-from syntaxer.domain_deserializer import deserializer_typedef_bare
-from syntaxer.domain_model import exceptions, typedef_struct
+from dspitter.domain_deserializer import deserializer_typedef_bare
+from dspitter.domain_model import exceptions, typedef_struct
 
 
 def parse_typedef_struct(lines: List[str]) -> typedef_struct.TypedefStruct:

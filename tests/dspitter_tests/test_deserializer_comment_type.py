@@ -1,7 +1,7 @@
-from syntaxer.domain_deserializer import (
+from dspitter.domain_deserializer import (
     deserializer_comment_type,
 )
-from syntaxer.domain_model import comment_type, exceptions
+from dspitter.domain_model import comment_type, exceptions
 from typing import cast
 import pytest
 

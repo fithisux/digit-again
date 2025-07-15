@@ -1,7 +1,7 @@
-from syntaxer.domain_deserializer import (
+from dspitter.domain_deserializer import (
     deserializer_function_export,
 )
-from syntaxer.domain_model import (
+from dspitter.domain_model import (
     declaration_type, exceptions
 )
 from typing import cast

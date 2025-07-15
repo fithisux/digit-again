@@ -1,7 +1,7 @@
 import dataclasses
 from typing import List
 
-from syntaxer.domain_model import declaration_type
+from dspitter.domain_model import declaration_type
 
 
 @dataclasses.dataclass

@@ -1,6 +1,6 @@
 import re
 from typing import List
-from syntaxer.domain_model import declaration_type, exceptions, typedef_bare
+from dspitter.domain_model import declaration_type, exceptions, typedef_bare
 
 
 def lines_parse_typedef_bare(lines: List[str]) -> typedef_bare.TypedefBare:

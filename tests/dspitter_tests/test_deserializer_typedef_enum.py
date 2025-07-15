@@ -1,7 +1,7 @@
-from syntaxer.domain_deserializer import (
+from dspitter.domain_deserializer import (
     deserializer_typedef_enum,
 )
-from syntaxer.domain_model import (
+from dspitter.domain_model import (
     typedef_enum,
     exceptions,
 )

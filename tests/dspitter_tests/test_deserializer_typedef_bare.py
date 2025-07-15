@@ -1,5 +1,5 @@
-from syntaxer.domain_deserializer import deserializer_typedef_bare
-from syntaxer.domain_model import typedef_bare, declaration_type, exceptions
+from dspitter.domain_deserializer import deserializer_typedef_bare
+from dspitter.domain_model import typedef_bare, declaration_type, exceptions
 from typing import cast
 import pytest
 
