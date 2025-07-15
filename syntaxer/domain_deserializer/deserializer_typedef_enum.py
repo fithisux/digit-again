@@ -4,7 +4,7 @@ from typing import List
 from syntaxer.domain_model import exceptions, typedef_enum
 
 
-def parse_typedef_enum(lines: List[str]) -> typedef_enum.TypedefEnumAlias:
+def parse_typedef_enum(lines: List[str]) -> typedef_enum.TypedefEnum:
     # Let's reduce spaces
     lines = [re.sub(r"\s+", " ", line) for line in lines]
     lines = [line.strip() for line in lines]
@@ -37,6 +37,13 @@ def parse_typedef_enum(lines: List[str]) -> typedef_enum.TypedefEnumAlias:
 
     # recover enum fields
     candidate_fields = m.group(2).split(",")
+    
+    # last entry may end up with ,
+    if re.match(r'^\s*$', candidate_fields[-1]):
+        candidate_fields = candidate_fields[:-1]
+        if len(candidate_fields) == 0:
+            raise exceptions.BadTypedefEnumField()
+
 
     # recover x=y
     enum_fields = dict()
@@ -50,4 +57,4 @@ def parse_typedef_enum(lines: List[str]) -> typedef_enum.TypedefEnumAlias:
     enum_alias = m.group(3)
 
     # construct the enum
-    return typedef_enum.TypedefEnumAlias(enum_alias, enum_label, enum_fields)
+    return typedef_enum.TypedefEnum(enum_alias, enum_label, enum_fields)

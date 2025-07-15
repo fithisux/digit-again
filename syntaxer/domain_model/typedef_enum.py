@@ -3,7 +3,7 @@ from typing import Dict
 
 
 @dataclasses.dataclass
-class TypedefEnumAlias:
+class TypedefEnum:
     enum_alias: str
     enum_label: str
     enum_fields: Dict[str, str]

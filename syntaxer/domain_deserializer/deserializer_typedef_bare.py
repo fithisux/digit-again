@@ -1,16 +1,19 @@
 import re
+from typing import List
+from syntaxer.domain_model import declaration_type, exceptions, typedef_bare
 
-from syntaxer.domain_model import declaration_type, exceptions, typedef_type
 
+def lines_parse_typedef_bare(lines: List[str]) -> typedef_bare.TypedefBare:
+    parse_typedef_bare(''.join(lines))
 
-def parse_typedef_type(stmt: str) -> typedef_type.TypedefAlias:
+def parse_typedef_bare(stmt: str) -> typedef_bare.TypedefBare:
     if "(" in stmt:
-        return parse_typedef_type_function(stmt)
+        return parse_typedef_bare_function(stmt)
     else:
-        return parse_typedef_type_simple(stmt)
+        return parse_typedef_bare_simple(stmt)
 
 
-def parse_typedef_type_simple(stmt: str) -> declaration_type.DeclarationType:
+def parse_typedef_bare_simple(stmt: str) -> declaration_type.DeclarationType:
     # Let's reduce spaces
     stmt = re.sub(r"\s+", " ", stmt)
     stmt = stmt.strip()
@@ -35,9 +38,8 @@ def parse_typedef_type_simple(stmt: str) -> declaration_type.DeclarationType:
 
     # Let's tackle double stars
 
-    print(f"Stmt is {stmt}")
     if "**" in stmt:
-        m = re.match(r"^(\w+)\s?\*\*\s?(\w+)\s?;$", stmt)
+        m = re.match(r"^(const \w+|\w+)\s?\*\*\s?(\w+)\s?;$", stmt)
         if m is None:
             raise exceptions.BadDeclarationDoublePointerTypeSimple()
 
@@ -48,7 +50,7 @@ def parse_typedef_type_simple(stmt: str) -> declaration_type.DeclarationType:
     # Let's tackle one star
 
     if "*" in stmt:
-        m = re.match(r"^(\w+)\s?\*\s?(\w+)\s?;$", stmt)
+        m = re.match(r"^(const \w+|\w+)\s?\*\s?(\w+)\s?;$", stmt)
         if m is None:
             raise exceptions.BadDeclarationSinglePointerTypeSimple()
 
@@ -56,16 +58,27 @@ def parse_typedef_type_simple(stmt: str) -> declaration_type.DeclarationType:
             m.group(2), m.group(1)
         )
 
+    # Let's tackle an array
+
+    if "[" in stmt and "]" in stmt:
+        m = re.match(r"^(const \w+|\w+) (\w+)\s?\[(\d+)\]\s?;$", stmt)
+        if m is None:
+            raise exceptions.BadDeclarationFixedArrayTypeSimple()
+
+        return declaration_type.DeclarationFixedArrayTypeSimple(
+            m.group(2), m.group(1), int(m.group(3))
+        )
+
     else:
-        # No star
-        m = re.match(r"^(\w+) (\w+)\s?;$", stmt)
+        # Last resort
+        m = re.match(r"^(const \w+|\w+) (\w+)\s?;$", stmt)
         if m is None:
             raise exceptions.BadDeclarationTypeSimple()
 
         return declaration_type.DeclarationTypeSimple(m.group(2), m.group(1))
 
 
-def parse_typedef_type_function(stmt: str) -> declaration_type.DeclarationTypeFunction:
+def parse_typedef_bare_function(stmt: str) -> declaration_type.DeclarationTypeFunction:
     # Let's reduce spaces
     stmt = re.sub(r"\s+", " ", stmt)
 
@@ -79,7 +92,7 @@ def parse_typedef_type_function(stmt: str) -> declaration_type.DeclarationTypeFu
 
     # Let's take function out of the equation
 
-    m = re.match(r"^(\w+[\s?\*\s?]*)\s?\(\s?\*\s?(\w+)\s?\)\s?\((.*)\)\s?;$", stmt)
+    m = re.match(r"^(const \w+[\s?\*\s?]*|\w+[\s?\*\s?]*)\s?\(\s?\*\s?(\w+)\s?\)\s?\((.*)\)\s?;$", stmt)
 
     if m is None:
         raise exceptions.BadDeclarationTypeFunction()
@@ -90,7 +103,7 @@ def parse_typedef_type_function(stmt: str) -> declaration_type.DeclarationTypeFu
 
     function_output = f"typedef {output_type} {function_name};"
 
-    output_type_simple = parse_typedef_type_simple(function_output)
+    output_type_simple = parse_typedef_bare_simple(function_output)
 
     function_args = function_args.strip()
 
@@ -100,7 +113,7 @@ def parse_typedef_type_function(stmt: str) -> declaration_type.DeclarationTypeFu
     else:
         function_inputs = function_args.split(",")
         inputs_type_simple = [
-            parse_typedef_type_simple(f"typedef {function_input.strip()};")
+            parse_typedef_bare_simple(f"typedef {function_input.strip()};")
             for function_input in function_inputs
         ]
 

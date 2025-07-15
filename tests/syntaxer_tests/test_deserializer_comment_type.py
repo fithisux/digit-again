@@ -5,8 +5,16 @@ from syntaxer.domain_model import comment_type, exceptions
 from typing import cast
 import pytest
 
+def test_cpp_comment1():
+    some_typedef: comment_type.CommentType = (
+        deserializer_comment_type.parse_comment_type(['//===----------------------------------------------------------------------===//'])
+    )
 
-def test_cpp_comment():
+    assert isinstance(some_typedef, comment_type.CommentType)
+    temp = cast(comment_type.CommentType, some_typedef)
+    assert temp.text == ['===----------------------------------------------------------------------===//']
+
+def test_cpp_comment2():
     some_typedef: comment_type.CommentType = (
         deserializer_comment_type.parse_comment_type(["   ///   d123 ll;;;"])
     )

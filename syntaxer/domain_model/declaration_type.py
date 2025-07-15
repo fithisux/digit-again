@@ -21,11 +21,18 @@ class DeclarationDoublePointerTypeSimple:
     symbol_key: str
     type_value: str
 
+@dataclasses.dataclass
+class DeclarationFixedArrayTypeSimple:
+    symbol_key: str
+    type_value: str
+    length: int
+
 
 type DeclarationType = (
     DeclarationTypeSimple
     | DeclarationSinglePointerTypeSimple
     | DeclarationDoublePointerTypeSimple
+    | DeclarationFixedArrayTypeSimple
 )
 
 

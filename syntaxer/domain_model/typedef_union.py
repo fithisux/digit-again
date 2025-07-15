@@ -1,10 +1,10 @@
 import dataclasses
 from typing import List
 
-from syntaxer.domain_model import typedef_type
+from syntaxer.domain_model import typedef_bare
 
 
 @dataclasses.dataclass
-class TypedefAliasUnion:
+class TypedefUnion:
     union_alias: str
-    union_fields: List[typedef_type.TypedefAlias]
+    union_fields: List[typedef_bare.TypedefBare]

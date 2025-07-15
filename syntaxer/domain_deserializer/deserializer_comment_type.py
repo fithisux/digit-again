@@ -8,7 +8,7 @@ def parse_comment_type(lines: List[str]) -> comment_type.CommentType:
 
     if len(lines) == 1:
         stmt = lines[0]
-        m = re.match(r"^\s+//(.*)$", stmt)
+        m = re.match(r"^\s*//(.*)$", stmt)
         if m is not None:
             return comment_type.CommentType([m.group(1)])
 
