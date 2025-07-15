@@ -38,15 +38,18 @@ def parse_typedef_struct(lines: List[str]) -> typedef_struct.TypedefStruct:
     struct_alias = struct_alias.replace("*", "")
     struct_alias = struct_alias.replace(" ", "")
 
+    # last entry may end up with ;
+    candidate_fields = m.group(2).split(";")
+    if re.match(r'^\s*$', candidate_fields[-1]):
+        candidate_fields = candidate_fields[:-1]
+        if len(candidate_fields) == 0:
+            raise exceptions.BadTypedefStructField()
+
     # recover struct fields
     struct_fields = []
-    candidate_fields = m.group(2).split(";")
-    if len(candidate_fields) == 1:
-        raise exceptions.BadTypedefStructField()
-    candidate_fields = candidate_fields[:-1]
-
     for candidate_field in candidate_fields:
         temp = "typedef " + candidate_field + ";"
+        print(f"Temp is {temp}")
         typedef_bare = deserializer_typedef_bare.parse_typedef_bare(temp)
         struct_fields.append(typedef_bare)
 

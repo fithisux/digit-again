@@ -38,7 +38,6 @@ def parse_typedef_bare_simple(stmt: str) -> declaration_type.DeclarationType:
 
     # Let's tackle double stars
 
-    print(f"Stmt is {stmt}")
     if "**" in stmt:
         m = re.match(r"^(const \w+|\w+)\s?\*\*\s?(\w+)\s?;$", stmt)
         if m is None:
@@ -93,7 +92,7 @@ def parse_typedef_bare_function(stmt: str) -> declaration_type.DeclarationTypeFu
 
     # Let's take function out of the equation
 
-    m = re.match(r"^(\w+[\s?\*\s?]*)\s?\(\s?\*\s?(\w+)\s?\)\s?\((.*)\)\s?;$", stmt)
+    m = re.match(r"^(const \w+[\s?\*\s?]*|\w+[\s?\*\s?]*)\s?\(\s?\*\s?(\w+)\s?\)\s?\((.*)\)\s?;$", stmt)
 
     if m is None:
         raise exceptions.BadDeclarationTypeFunction()
