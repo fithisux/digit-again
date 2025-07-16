@@ -4,7 +4,7 @@ from dspitter.code_generation.dlang import generator
 DUCKDB_HEADER_FILE = "modified_header_files/duckdb_modified.h"
 DUCKDB_DEPRECATION_MARKER = "DUCKDB_API_NO_DEPRECATED"
 DUCKDB_FUNCTION_EXPORT_MARKER = "DUCKDB_C_API"
-DUCKDB_DI_FILE = "di_files/duckdb.d"
+DUCKDB_DI_FILE = "d_files/duckdb.d"
 
 if __name__ == "__main__":
     parse_config = parser.ParseConfig(DUCKDB_HEADER_FILE, DUCKDB_DEPRECATION_MARKER, DUCKDB_FUNCTION_EXPORT_MARKER)
