@@ -30,16 +30,34 @@ def escape_name(type_name: Tuple[str, str]) -> Tuple[str, str]:
 def typedecl_helper(input: typedef_bare.TypedefBare) -> Tuple[str, str]:
     if isinstance(input, declaration_type.DeclarationTypeSimple):
         temp = cast(declaration_type.DeclarationTypeSimple, input)
-        return (f"{temp.type_value}", temp.symbol_key)
+        type_value = temp.type_value
+        if type_value.startswith('const '):
+            type_value = f"const({type_value[6:]})"
+        return (type_value, temp.symbol_key)
     elif isinstance(input, declaration_type.DeclarationSinglePointerTypeSimple):
         temp = cast(declaration_type.DeclarationSinglePointerTypeSimple, input)
-        return (f"{temp.type_value}*", temp.symbol_key)
+        type_value = temp.type_value
+        if type_value.startswith('const '):
+            type_value = f"const({type_value[6:]}*)"
+        else:
+            type_value = f"{type_value}*"
+        return (type_value, temp.symbol_key)
     elif isinstance(input, declaration_type.DeclarationDoublePointerTypeSimple):
         temp = cast(declaration_type.DeclarationDoublePointerTypeSimple, input)
-        return (f"{temp.type_value}**", temp.symbol_key)
+        type_value = temp.type_value
+        if type_value.startswith('const '):
+            type_value = f"const({type_value[6:]}**)"
+        else:
+            type_value = f"{type_value}**"
+        return (type_value, temp.symbol_key)
     elif isinstance(input, declaration_type.DeclarationFixedArrayTypeSimple):
         temp = cast(declaration_type.DeclarationFixedArrayTypeSimple, input)
-        return (f"{temp.type_value}[{temp.length}]", temp.symbol_key)
+        type_value = temp.type_value
+        if type_value.startswith('const '):
+            type_value = f"const({type_value[6:]}[{temp.length}])"
+        else:
+            type_value = f"{temp.type_value}[{temp.length}]"
+        return (type_value, temp.symbol_key)
     elif isinstance(input, declaration_type.DeclarationTypeFunction):
         temp = cast(declaration_type.DeclarationTypeFunction, input)
 
