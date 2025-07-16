@@ -13,4 +13,4 @@ if __name__ == "__main__":
     print("All good mate")
     file_lines = generator.generate(parse_specs_with_deprecation, [])
     with open(DUCKDB_DI_FILE, 'w') as f:
-        f.writelines(file_lines)
+        f.write('\n'.join(file_lines))

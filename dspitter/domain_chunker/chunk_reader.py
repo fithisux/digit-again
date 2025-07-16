@@ -58,11 +58,8 @@ def find_end_of_chunk(
 
 
 def find_end_of_typedefchunk(lines: List[str], lastpos: int, some_ex: Exception) -> int:
-    # print(lines)
     target = lines[lastpos].strip().replace(" ", "")
-    # print(target)
     m = re.match(r"}\*?\w+;$", target)
-    # print(m)
     while m is None:
         lastpos = lastpos + 1
         if lastpos == len(lines):

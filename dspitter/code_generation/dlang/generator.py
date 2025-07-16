@@ -23,6 +23,9 @@ def generate(marked_parse_types: List[Tuple[bool, Optional[parser.Parse_Type]]],
         else:
             ...
 
+        should_deprecate = deprecation_marker
+        
+
         if(parse_type is None):
             generated_code.append('')
         elif(isinstance(parse_type, comment_type.CommentType)):

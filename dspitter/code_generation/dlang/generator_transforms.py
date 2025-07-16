@@ -61,31 +61,31 @@ def generate_typedef_bare(input: typedef_bare.TypedefBare) -> str:
         return f"alias {temp.symbol_key} = {temp.type_value};"
     elif isinstance(input, declaration_type.DeclarationSinglePointerTypeSimple):
         temp = cast(declaration_type.DeclarationSinglePointerTypeSimple, input)
-        return f"alias {temp.symbol_key} = {temp.type_value} *;"
+        return f"alias {temp.symbol_key} = {temp.type_value}*;"
     elif isinstance(input, declaration_type.DeclarationDoublePointerTypeSimple):
         temp = cast(declaration_type.DeclarationDoublePointerTypeSimple, input)
-        return f"alias {temp.symbol_key} = {temp.type_value} **;"
+        return f"alias {temp.symbol_key} = {temp.type_value}**;"
     elif isinstance(input, declaration_type.DeclarationFixedArrayTypeSimple):
         temp = cast(declaration_type.DeclarationFixedArrayTypeSimple, input)
         return f"alias {temp.symbol_key} = {temp.type_value}[{temp.length}];"
     elif isinstance(input, declaration_type.DeclarationTypeFunction):
         temp = cast(declaration_type.DeclarationTypeFunction, input)
-        output_alias = generate_typedef_bare(temp.function_output)
+        output_value, output_key = typedecl_helper(temp.function_output)
         inputs_list = [
             ' '.join(typedecl_helper(function_input))
             for function_input in temp.function_input
         ]
 
-        return f"{output_alias} function ({','.join(inputs_list)});"
+        return f"alias {output_key} = {output_value} function({','.join(inputs_list)});"
     else:
         assert_never(input)
 
 
 def generate_typedef_enum(input: typedef_enum.TypedefEnum) -> str:
 
-    return f"""alias {input.enum_alias} = enum {
-        ',\n'.join([enum_field[0]+' = '+enum_field[1]  for enum_field in input.enum_fields.items()])
-    };"""
+    return (f"alias {input.enum_alias} = enum " + "{\n" +
+        f"{',\n'.join([enum_field[0]+' = '+enum_field[1]  for enum_field in input.enum_fields.items()])}"+
+        "\n};")
 
 
 def generate_typedef_struct(input: typedef_struct.TypedefStruct) -> str:
@@ -95,9 +95,9 @@ def generate_typedef_struct(input: typedef_struct.TypedefStruct) -> str:
         " ".join(typedecl_helper(struct_field))
         for struct_field in input.struct_declaration.struct_fields
     ]
-    return f"""alias {input.struct_alias} = struct {
-        ';\n'.join(fields_list)
-    }{the_star};"""
+    return (f"alias {input.struct_alias} = struct " + "{\n" +
+    f"{';\n'.join(fields_list)}"+
+    "\n}"+f"{the_star};")
 
 
 def generate_typedef_union(input: typedef_union.TypedefUnion) -> str:
@@ -106,9 +106,9 @@ def generate_typedef_union(input: typedef_union.TypedefUnion) -> str:
         " ".join(typedecl_helper(union_field))
         for union_field in input.union_fields
     ]
-    return f"""alias {input.union_alias} = union {
-        ';\n'.join(fields_list)
-    };"""
+    return (f"alias {input.union_alias} = union " + "{\n" +
+    f"{';\n'.join(fields_list)}"+
+    "\n};")
 
 
 def generate_function_export(input: declaration_type.FunctionExport) -> str:
@@ -121,4 +121,4 @@ def generate_function_export(input: declaration_type.FunctionExport) -> str:
         ]
     )
 
-    return f"extern (C) {output_type} {output_name}({arg_list})"
+    return f"extern (C) {output_type} {output_name}({arg_list});"

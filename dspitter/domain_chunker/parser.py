@@ -36,20 +36,23 @@ class ParseConfig:
 def chunk_file(parse_config: ParseConfig) -> List[Tuple[bool, chunk_reader.ChunkSpec]]:
 
     chunk_specs: List[Tuple[bool, chunk_reader.ChunkSpec]] = []
+
     with open(parse_config.file_name, newline="") as f:
         lines = f.read().splitlines()
         pos = 0
         tags = line_tagger.tag_lines(parse_config.deprecation_marker, lines)
-        # print(tags)
-        while pos < len(lines):
-            print(f"Read line with deprecation_marker {tags[pos]}")
-            print(f"Read line with content {lines[pos]}")
 
-            if (tags[pos].conditional_level > 0) or (
-                lines[pos].lstrip(" ").startswith("#")
+        while pos < len(lines):
+
+            print(f"Read line with deprecation_marker {tags[pos]} and content {lines[pos]}")
+
+            if (tags[pos].is_cpp) or (
+                lines[pos].lstrip().startswith("#")
             ):
                 pos = pos + 1
                 continue
+
+            print("ok")
 
             if (result := chunk_reader.read_empty_line(lines, pos)) is not None:
                 ...
@@ -69,10 +72,10 @@ def chunk_file(parse_config: ParseConfig) -> List[Tuple[bool, chunk_reader.Chunk
                 result = None
 
             if result is not None:
-                print(result)
                 chunk_specs.append(
-                    ((tags[pos].deprecation_conditional_level > 0), result)
+                    (tags[pos].is_deprecation, result)
                 )
+                print(tags[pos].is_deprecation)
                 pos = result.after_end_pos
                 continue
             else:
@@ -90,7 +93,6 @@ def parse_chunks(
 
     parse_specs: List[Optional[Parse_Type]] = []
     for chunk in chunks:
-        print(chunk)
         match (chunk[1].chuck_type):
             case chunk_reader.ChunkType.C_COMMENT:
                 parse_specs.append(
@@ -127,4 +129,4 @@ def parse_chunks(
             case _:
                 raise UnknownChunk()
 
-    return [(chunks[i][0], parse_specs[i]) for i, _ in enumerate(parse_specs)]
+    return [(chunks[i][0], parse_specs[i]) for i, _ in enumerate(chunks)]

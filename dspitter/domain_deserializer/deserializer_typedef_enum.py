@@ -23,8 +23,6 @@ def parse_typedef_enum(lines: List[str]) -> typedef_enum.TypedefEnum:
     # make one liner
     stmt = "".join(lines)
 
-    print(f"Whole enum stmt: {stmt}")
-
     # recover parts of enum
     m = re.match(r"^(\w*)\s?{(.*)}\s?(\w+)\s?;$", stmt)
     if m is None:
