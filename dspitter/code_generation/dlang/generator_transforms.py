@@ -25,7 +25,7 @@ def generate_comment(input: comment_type.CommentType) -> str:
         return '\n'.join(lines)
 
 def escape_name(type_name: Tuple[str, str]) -> Tuple[str, str]:
-    return (type_name[0], f"some_{type_name[1]}" if type_name[1] == 'version' else type_name[1])
+    return (type_name[0], f"some_{type_name[1]}" if type_name[1] in ['function', 'version', 'alias', 'set', 'out'] else type_name[1])
 
 def typedecl_helper(input: typedef_bare.TypedefBare) -> Tuple[str, str]:
     if isinstance(input, declaration_type.DeclarationTypeSimple):
@@ -85,21 +85,27 @@ def generate_typedef_bare(input: typedef_bare.TypedefBare) -> str:
 
 def generate_typedef_enum(input: typedef_enum.TypedefEnum) -> str:
 
-    return (f"alias {input.enum_alias} = enum " + "{\n" +
+    return (f"enum {input.enum_alias}" + " {\n" +
         f"{',\n'.join([enum_field[0]+' = '+enum_field[1]  for enum_field in input.enum_fields.items()])}"+
         "\n};")
 
 
 def generate_typedef_struct(input: typedef_struct.TypedefStruct) -> str:
 
-    the_star = "*" if isinstance(input, typedef_struct.TypedefStructPointer) else ""
-    fields_list = [
+    if isinstance(input, typedef_struct.TypedefStructValue):
+        fields_list = [
         " ".join(typedecl_helper(struct_field))
         for struct_field in input.struct_declaration.struct_fields
     ]
-    return (f"alias {input.struct_alias} = struct " + "{\n" +
-    f"{';\n'.join(fields_list)}"+
-    "\n}"+f"{the_star};")
+        return (f"struct {input.struct_alias} " + "{\n" + f"{';\n'.join(fields_list)}"+";\n};")
+    elif isinstance(input, typedef_struct.TypedefStructPointer):
+        fields_list = [
+        " ".join(typedecl_helper(struct_field))
+        for struct_field in input.struct_declaration.struct_fields
+    ]
+        xxx = (f"struct {input.struct_declaration.struct_label} " + "{\n" + f"{';\n'.join(fields_list)}"+";\n};")
+        xxx += f"\nalias {input.struct_alias} = {input.struct_declaration.struct_label}*;"
+        return xxx
 
 
 def generate_typedef_union(input: typedef_union.TypedefUnion) -> str:
@@ -108,9 +114,9 @@ def generate_typedef_union(input: typedef_union.TypedefUnion) -> str:
         " ".join(typedecl_helper(union_field))
         for union_field in input.union_fields
     ]
-    return (f"alias {input.union_alias} = union " + "{\n" +
+    return (f"union {input.union_alias} " + "{\n" +
     f"{';\n'.join(fields_list)}"+
-    "\n};")
+    ";\n};")
 
 
 def generate_function_export(input: declaration_type.FunctionExport) -> str:
@@ -118,7 +124,7 @@ def generate_function_export(input: declaration_type.FunctionExport) -> str:
     output_type, output_name = typedecl_helper(input.function_output)
     arg_list = " ,".join(
         [
-            ' '.join(typedecl_helper(function_input))
+            ' '.join(escape_name(typedecl_helper(function_input)))
             for function_input in input.function_input
         ]
     )

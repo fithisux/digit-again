@@ -61,7 +61,7 @@ def test_generate_typedef_enum():
     output = generator_transforms.generate_typedef_enum(input)
     assert (
         output
-        == """alias enum_name = enum {
+        == """enum enum_name {
 key1 = value1,
 key2 = value2
 };"""
@@ -82,9 +82,9 @@ def test_generate_typedef_struct1():
     output = generator_transforms.generate_typedef_struct(input)
     assert (
         output
-        == """alias struct_name = struct {
+        == """struct struct_name {
 value1** key1;
-value2 key2
+value2 key2;
 };"""
     )
 
@@ -103,10 +103,11 @@ def test_generate_typedef_struct2():
     output = generator_transforms.generate_typedef_struct(input)
     assert (
         output
-        == """alias struct_name = struct {
+        == """struct haha {
 value1** key1;
-value2 key2
-}*;"""
+value2 key2;
+};
+alias struct_name = haha*;"""
     )
 
 
@@ -121,9 +122,9 @@ def test_generate_typedef_union():
     output = generator_transforms.generate_typedef_union(input)
     assert (
         output
-        == """alias union_name = union {
+        == """union union_name {
 value1** key1;
-value2 key2
+value2 key2;
 };"""
     )
 
