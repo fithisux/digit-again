@@ -20,8 +20,6 @@ def parse_typedef_struct(lines: List[str]) -> typedef_struct.TypedefStruct:
 
     stmt = stmt.replace("typedef struct ", "")
 
-    print(f"Whole struct stmt: {stmt}")
-
     # recover parts of struct
     m = re.match(r"^(\w*)\s?{(.*)}\s?(\*?\s?\w+)\s?;$", stmt)
     if m is None:
@@ -49,7 +47,6 @@ def parse_typedef_struct(lines: List[str]) -> typedef_struct.TypedefStruct:
     struct_fields = []
     for candidate_field in candidate_fields:
         temp = "typedef " + candidate_field + ";"
-        print(f"Temp is {temp}")
         typedef_bare = deserializer_typedef_bare.parse_typedef_bare(temp)
         struct_fields.append(typedef_bare)
 

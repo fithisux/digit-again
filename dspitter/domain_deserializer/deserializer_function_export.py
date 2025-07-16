@@ -15,8 +15,6 @@ def parse_function_export(
 
     # Let's eliminate exporter
 
-    print(f"Whole function export stmt: {stmt}")
-
     if not stmt.startswith(f"{some_marker} "):
         raise exceptions.NotAFunctionExport()
 
@@ -25,10 +23,10 @@ def parse_function_export(
 
     # Let's take function out of the equation
 
-    m = re.match(r"^(\w+[\s?\*\s?]*)\s(\w+)\s?\((.*)\)\s?;$", stmt)
+    m = re.match(r"^(const \w+[\s?\*\s?]*|\w+[\s?\*\s?]*)(\w+)\s?\((.*)\)\s?;$", stmt)
 
     if m is None:
-        print("shit!")
+        print(stmt)
         raise exceptions.BadFunctionExport()
 
     output_type = m.group(1)

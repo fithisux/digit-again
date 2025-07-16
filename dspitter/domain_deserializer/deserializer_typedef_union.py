@@ -20,8 +20,6 @@ def parse_typedef_union(lines: List[str]) -> typedef_union.TypedefUnion:
 
     stmt = stmt.replace("typedef union ", "")
 
-    print(f"Whole union stmt: {stmt}")
-
     # recover parts of struct
     m = re.match(r"^\s?{(.*)}\s?(\w+)\s?;$", stmt)
     if m is None:
