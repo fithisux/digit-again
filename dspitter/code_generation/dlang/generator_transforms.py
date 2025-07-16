@@ -76,7 +76,7 @@ def generate_typedef_bare(input: typedef_bare.TypedefBare) -> str:
             for function_input in temp.function_input
         ]
 
-        return f"alias {output_key} = {output_value} function({','.join(inputs_list)});"
+        return f"alias {output_key} = {output_value} function({' ,'.join(inputs_list)});"
     else:
         assert_never(input)
 
@@ -114,7 +114,7 @@ def generate_typedef_union(input: typedef_union.TypedefUnion) -> str:
 def generate_function_export(input: declaration_type.FunctionExport) -> str:
 
     output_type, output_name = typedecl_helper(input.function_output)
-    arg_list = ",".join(
+    arg_list = " ,".join(
         [
             " ".join(typedecl_helper(function_input))
             for function_input in input.function_input
