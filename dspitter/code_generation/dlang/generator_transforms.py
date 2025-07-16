@@ -24,6 +24,8 @@ def generate_comment(input: comment_type.CommentType) -> str:
 
         return '\n'.join(lines)
 
+def escape_name(type_name: Tuple[str, str]) -> Tuple[str, str]:
+    return (type_name[0], f"some_{type_name[1]}" if type_name[1] == 'version' else type_name[1])
 
 def typedecl_helper(input: typedef_bare.TypedefBare) -> Tuple[str, str]:
     if isinstance(input, declaration_type.DeclarationTypeSimple):
@@ -44,7 +46,7 @@ def typedecl_helper(input: typedef_bare.TypedefBare) -> Tuple[str, str]:
         output_type, output_name = typedecl_helper(temp.function_output)
         arg_list = ",".join(
             [
-                " ".join(typedecl_helper(function_input))
+                " ".join(escape_name(typedecl_helper(function_input)))
                 for function_input in temp.function_input
             ]
         )
@@ -116,7 +118,7 @@ def generate_function_export(input: declaration_type.FunctionExport) -> str:
     output_type, output_name = typedecl_helper(input.function_output)
     arg_list = " ,".join(
         [
-            " ".join(typedecl_helper(function_input))
+            ' '.join(typedecl_helper(function_input))
             for function_input in input.function_input
         ]
     )

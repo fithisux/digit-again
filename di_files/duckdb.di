@@ -618,7 +618,7 @@ void* internal_ptr
 alias duckdb_extension_access = struct {
 void function(duckdb_extension_info info,const char* error) set_error;
 duckdb_database* function(duckdb_extension_info info) get_database;
-const void* function(duckdb_extension_info info,const char* version) get_api
+const void* function(duckdb_extension_info info,const char* some_version) get_api
 };
 
 
