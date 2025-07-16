@@ -2,11 +2,29 @@ from typing import List, Tuple, Optional
 from dspitter.domain_chunker import chunk_reader, line_tagger
 import dataclasses
 
-from dspitter.domain_deserializer import deserializer_comment_type, deserializer_function_export, deserializer_typedef_enum, deserializer_typedef_struct, deserializer_typedef_bare, deserializer_typedef_union
-from dspitter.domain_model import comment_type, declaration_type, typedef_enum, typedef_struct, typedef_bare, typedef_union
+from dspitter.domain_deserializer import (
+    deserializer_comment_type,
+    deserializer_function_export,
+    deserializer_typedef_enum,
+    deserializer_typedef_struct,
+    deserializer_typedef_bare,
+    deserializer_typedef_union,
+)
+from dspitter.domain_model import (
+    comment_type,
+    typedef_bare,
+    declaration_type,
+    typedef_enum,
+    typedef_struct,
+    typedef_union,
+)
+
 
 class NonConformingFile(Exception): ...
+
+
 class UnknownChunk(Exception): ...
+
 
 @dataclasses.dataclass
 class ParseConfig:
@@ -27,7 +45,9 @@ def chunk_file(parse_config: ParseConfig) -> List[Tuple[bool, chunk_reader.Chunk
             print(f"Read line with deprecation_marker {tags[pos]}")
             print(f"Read line with content {lines[pos]}")
 
-            if (tags[pos].conditional_level > 0) or (lines[pos].lstrip(' ').startswith('#')):
+            if (tags[pos].conditional_level > 0) or (
+                lines[pos].lstrip(" ").startswith("#")
+            ):
                 pos = pos + 1
                 continue
 
@@ -38,7 +58,9 @@ def chunk_file(parse_config: ParseConfig) -> List[Tuple[bool, chunk_reader.Chunk
             elif (result := chunk_reader.read_c_comment(lines, pos)) is not None:
                 ...
             elif (
-                result := chunk_reader.read_function_export(parse_config.function_export_marker, lines, pos)
+                result := chunk_reader.read_function_export(
+                    parse_config.function_export_marker, lines, pos
+                )
             ) is not None:
                 ...
             elif (result := chunk_reader.read_typedef(lines, pos)) is not None:
@@ -48,7 +70,9 @@ def chunk_file(parse_config: ParseConfig) -> List[Tuple[bool, chunk_reader.Chunk
 
             if result is not None:
                 print(result)
-                chunk_specs.append(((tags[pos].deprecation_conditional_level > 0), result))
+                chunk_specs.append(
+                    ((tags[pos].deprecation_conditional_level > 0), result)
+                )
                 pos = result.after_end_pos
                 continue
             else:
@@ -57,31 +81,50 @@ def chunk_file(parse_config: ParseConfig) -> List[Tuple[bool, chunk_reader.Chunk
     return chunk_specs
 
 
-type Parse_Type =  comment_type.CommentType | declaration_type.FunctionExport | typedef_enum.TypedefEnum | typedef_struct.TypedefStruct | typedef_bare.TypedefBare | typedef_union.TypedefUnion
+type Parse_Type = comment_type.CommentType | typedef_bare.TypedefBare | declaration_type.FunctionExport | typedef_enum.TypedefEnum | typedef_struct.TypedefStruct | typedef_union.TypedefUnion
 
-def parse_chunks(parse_config: ParseConfig, chunks: List[Tuple[bool, chunk_reader.ChunkSpec]]) -> List[Tuple[bool, Optional[Parse_Type]]]:
+
+def parse_chunks(
+    parse_config: ParseConfig, chunks: List[Tuple[bool, chunk_reader.ChunkSpec]]
+) -> List[Tuple[bool, Optional[Parse_Type]]]:
 
     parse_specs: List[Optional[Parse_Type]] = []
     for chunk in chunks:
         print(chunk)
-        match(chunk[1].chuck_type):
+        match (chunk[1].chuck_type):
             case chunk_reader.ChunkType.C_COMMENT:
-                parse_specs.append(deserializer_comment_type.parse_comment_type(chunk[1].lines))
+                parse_specs.append(
+                    deserializer_comment_type.parse_comment_type(chunk[1].lines)
+                )
             case chunk_reader.ChunkType.CPP_COMMENT:
-                parse_specs.append(deserializer_comment_type.parse_comment_type(chunk[1].lines))
+                parse_specs.append(
+                    deserializer_comment_type.parse_comment_type(chunk[1].lines)
+                )
             case chunk_reader.ChunkType.EMPTY_LINE:
                 parse_specs.append(None)
             case chunk_reader.ChunkType.FUNCTION_EXPORT:
-                parse_specs.append(deserializer_function_export.parse_function_export(parse_config.function_export_marker ,chunk[1].lines))
+                parse_specs.append(
+                    deserializer_function_export.parse_function_export(
+                        parse_config.function_export_marker, chunk[1].lines
+                    )
+                )
             case chunk_reader.ChunkType.TYPEDEF_BARE:
-                parse_specs.append(deserializer_typedef_bare.lines_parse_typedef_bare(chunk[1].lines))
+                parse_specs.append(
+                    deserializer_typedef_bare.lines_parse_typedef_bare(chunk[1].lines)
+                )
             case chunk_reader.ChunkType.TYPEDEF_ENUM:
-                parse_specs.append(deserializer_typedef_enum.parse_typedef_enum(chunk[1].lines))
+                parse_specs.append(
+                    deserializer_typedef_enum.parse_typedef_enum(chunk[1].lines)
+                )
             case chunk_reader.ChunkType.TYPEDEF_STRUCT:
-                parse_specs.append(deserializer_typedef_struct.parse_typedef_struct(chunk[1].lines))
+                parse_specs.append(
+                    deserializer_typedef_struct.parse_typedef_struct(chunk[1].lines)
+                )
             case chunk_reader.ChunkType.TYPEDEF_UNION:
-                parse_specs.append(deserializer_typedef_union.parse_typedef_union(chunk[1].lines))
+                parse_specs.append(
+                    deserializer_typedef_union.parse_typedef_union(chunk[1].lines)
+                )
             case _:
                 raise UnknownChunk()
-    
-    return [(chunks[i][0], parse_specs[i]) for i,_ in enumerate(parse_specs)]
+
+    return [(chunks[i][0], parse_specs[i]) for i, _ in enumerate(parse_specs)]
