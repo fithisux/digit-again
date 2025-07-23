@@ -1,0 +1,7 @@
+I put the lib and dll from the distribution here and I compile with
+
+dmd .\example.d -version=DUCKDB_DEPRECATED .\duckdb.lib
+
+on windows you may need to add dmd's bin64 to path
+
+set PATH=%PATH%;c:\Users\VasilisAnagnostopoul\scoop\apps\dmd\2.111.0\windows\bin64\
